@@ -1,35 +1,57 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    apply from: './constants.gradle'
+
+    ext.buildMaven = { p -> repositories { maven { url p } } }
+
+
     repositories {
         google()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
         jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        mavenCentral()
+        mavenRepos.each { buildMaven(it) }
 
+    }
+
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$configuration.buildGradle_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$configuration.kotlin_version"
+        classpath "gradle.plugin.io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$configuration.detekt_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
+plugins {
+    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC9.2"
+}
+
+
 allprojects {
+    ext.buildMaven = { p -> repositories { maven { url p } } }
+
+
     repositories {
         google()
         jcenter()
+        mavenRepos.each { buildMaven(it) }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+
     }
+
+
+
+
+
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-ext {
-
-    runnerVersion = "1.0.0"
-    rulesVersion = "1.0.0"
-    espressoVersion = "3.0.0"
-}
-

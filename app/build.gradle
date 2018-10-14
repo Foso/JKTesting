@@ -1,17 +1,18 @@
-apply from: 'constants.gradle'
+apply from: '../constants.gradle'
 
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.gitlab.arturbosch.detekt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion configuration.compileSdk
     defaultConfig {
         applicationId "de.jensklingenberg.jktesting"
-        minSdkVersion 19
-        targetSdkVersion 27
+        minSdkVersion configuration.minSdk
+        targetSdkVersion configuration.targetSdk
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -24,36 +25,53 @@ android {
     }
 }
 
+detekt {
+    version = "1.0.0.RC8"
+    input = files("src/main/kotlin")
+    filters = ".*/resources/.*,.*/build/.*"
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$configuration.kotlin_version"
+    implementation "com.android.support:appcompat-v7:${libs.supportLibVersion}"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
 
 //Retrofit
-    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    implementation "com.squareup.retrofit2:converter-scalars:${retrofitVersion}"
-
-    implementation("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
+    implementation "com.squareup.retrofit2:retrofit:${libs.retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-scalars:${libs.retrofitVersion}"
+    implementation("com.squareup.retrofit2:converter-simplexml:${libs.retrofitVersion}") {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
     }
-    implementation 'androidx.core:core-ktx:0.2'
+    implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:${libs.rxjava2Adapter}"
 
-    implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:${rxjava2Adapter}"
+    //Andorid
+   // implementation 'androidx.core:core-ktx:1.0.0'
 
-    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+
 
     //Moshi
-    implementation "com.squareup.moshi:moshi:${moshiVersion}"
-    implementation "com.squareup.retrofit2:converter-moshi:${moshiConverterVersion}"
-    implementation "com.serjltt.moshi:moshi-lazy-adapters:${moshilazyadapters}"
+    implementation "com.squareup.moshi:moshi:${libs.moshiVersion}"
+    implementation "com.squareup.retrofit2:converter-moshi:${libs.moshiConverterVersion}"
+    implementation "com.serjltt.moshi:moshi-lazy-adapters:${libs.moshilazyadapters}"
 
     // Force usage of support annotations in the test app, since it is internally used by the runner module.
-    androidTestCompile 'com.android.support:support-annotations:27.1.0'
-    androidTestCompile 'com.android.support.test:rules:' + rootProject.rulesVersion;
+    androidTestCompile "com.android.support:support-annotations:${libs.supportLibVersion}"
+
+
+    //Testing
+    androidTestCompile "com.android.support.test:rules:${libs.rulesVersion}"
+    testImplementation "junit:junit:${libs.junit}"
+    androidTestImplementation "com.android.support.test:runner:${libs.runnerVersion}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:${libs.espressocore}"
+    androidTestImplementation "org.mockito:mockito-android:${libs.mockitoVersion}"
+    androidTestImplementation "org.mockito:mockito-core:${libs.mockitoVersion}"
+    androidTestImplementation "io.mockk:mockk:${libs.mockkVersion}"
+    androidTestImplementation "io.mockk:mockk-android:${libs.mockkVersion}"
+
+
 }
+
