@@ -5,6 +5,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
 apply plugin: 'io.gitlab.arturbosch.detekt'
 
 android {
@@ -15,7 +17,7 @@ android {
         targetSdkVersion configuration.targetSdk
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "de.jensklingenberg.jktesting.UiTestsRunner"
     }
     buildTypes {
         release {
@@ -71,6 +73,12 @@ dependencies {
     androidTestImplementation "org.mockito:mockito-core:${libs.mockitoVersion}"
     androidTestImplementation "io.mockk:mockk:${libs.mockkVersion}"
     androidTestImplementation "io.mockk:mockk-android:${libs.mockkVersion}"
+
+    implementation "com.google.dagger:dagger-android:${libs.dagger_version}"
+    implementation "com.google.dagger:dagger-android-support:${libs.dagger_version}"
+    // if you use the support libraries
+    kapt "com.google.dagger:dagger-android-processor:${libs.dagger_version}"
+    kapt "com.google.dagger:dagger-compiler:${libs.dagger_version}"
 
 
 }

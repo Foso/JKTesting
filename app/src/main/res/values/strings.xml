@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">JKTesting</string>
+    <string name="hello">Hallo</string>
 </resources>

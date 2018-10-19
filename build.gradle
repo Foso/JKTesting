@@ -8,9 +8,7 @@ buildscript {
 
     repositories {
         google()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+
         jcenter()
         mavenCentral()
         mavenRepos.each { buildMaven(it) }
@@ -40,9 +38,7 @@ allprojects {
         google()
         jcenter()
         mavenRepos.each { buildMaven(it) }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+
 
     }
 

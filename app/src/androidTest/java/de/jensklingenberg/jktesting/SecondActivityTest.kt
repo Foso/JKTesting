@@ -16,7 +16,11 @@
 
 package de.jensklingenberg.jktesting
 
+import android.app.Application
+import android.app.Instrumentation
 import android.content.Context
+import android.content.pm.InstrumentationInfo
+import android.support.test.InstrumentationRegistry
 import android.support.test.filters.LargeTest
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
@@ -28,8 +32,8 @@ import org.junit.runner.RunWith
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.matcher.ViewMatchers.withId
-import android.support.test.espresso.matcher.ViewMatchers.withText
+import android.support.test.espresso.matcher.RootMatchers.withDecorView
+import android.support.test.espresso.matcher.ViewMatchers.*
 import io.mockk.every
 import android.support.test.rule.GrantPermissionRule
 import io.mockk.mockk
@@ -37,11 +41,13 @@ import io.mockk.mockkClass
 import io.mockk.verify
 import net.bytebuddy.matcher.ElementMatchers.any
 import net.bytebuddy.matcher.ElementMatchers.anyOf
+import org.hamcrest.CoreMatchers
 import org.junit.Before
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
+import javax.inject.Inject
 
 
 @RunWith(AndroidJUnit4::class)
@@ -49,28 +55,31 @@ import org.mockito.Mockito.verify
 class SecondActivityTest {
 
 
-    val mock = mockkClass(SecondActivity::class)
-
-    @Rule @JvmField
+    @Rule
+    @JvmField
     var mActivityRule = ActivityTestRule(
-        SecondActivity::class.java
+        SecondActivity::class.java, false, false
     )
 
-@Before
-fun setup(){
+    @Before
+    fun setup() {
 
-}
-
+        every { mockApplication.mockcon.isWifiEnabled() } returns false
+        mActivityRule.launchActivity(null)
+    }
 
 
     @Test
     fun changeText_sameActivity() {
         // Type text and then press the button.
         //onView(withId(R.id.testBTN)).perform(click()).check(matches(withText(BYE)))
-        val act =(mActivityRule.activity as SecondActivity)
+        val act = (mActivityRule.activity as SecondActivity)
 
-       // every{act.test(any())}.returns(false)
-        verify { 1==1 }
+        onView(withId(R.id.button)).perform(click())
+        onView(withText(R.string.hello)).inRoot(withDecorView(CoreMatchers.not(CoreMatchers.`is`(act.window.decorView))))
+            .check(matches(isDisplayed()))
+        // every{act.test(any())}.returns(false)
+
     }
 
     companion object {

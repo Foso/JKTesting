@@ -1,4 +1,4 @@
-package de.jensklingenberg.rxjavaretrofittesting.model
+package de.jensklingenberg.jktesting.model
 
 import com.squareup.moshi.Json
 
